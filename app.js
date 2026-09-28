@@ -173,20 +173,25 @@ function templateFormatCopy(format,theme){
  const labels={impact:'BRUJAS FPC',night:'NOCHE DE PARTIDO',classic:'FÚTBOL DE BARRIO'};
  copy.elements.customGhost={type:'text',x:50,y:50,size:theme==='night'?215:240,font:'Anton',weight:900,spacing:-2,color:theme==='impact'?'#e6382a':theme==='night'?'#284261':'#345237',opacity:.22,content:format==='final'?'90’':format==='goal'?'GOOOL':labels[theme]};
  copy.elements.customLabel={type:'text',x:50,y:88,size:24,font:'Montserrat',weight:900,spacing:7,color:style.ink,content:format==='final'?'RESULTADO FINAL':format==='goal'?'LA PASIÓN SE FESTEJA':format==='upcoming'?'VIVILO CON NOSOTROS':'BRUJAS FPC'};
- if(theme==='impact'){
-  copy.elements.title.y=16;if(copy.elements.line)copy.elements.line.y=25;if(copy.elements.homeLogo)copy.elements.homeLogo.y=40;if(copy.elements.awayLogo)copy.elements.awayLogo.y=40;
-  if(copy.elements.homeScore){copy.elements.homeScore.y=56;copy.elements.awayScore.y=56}
-  copy.elements.customGhost.y=70;copy.elements.customGhost.size=280;copy.elements.customLabel.y=89;
- }else if(theme==='night'){
-  copy.elements.title.y=74;if(copy.elements.line)copy.elements.line.y=81;if(copy.elements.homeLogo)copy.elements.homeLogo.y=27;if(copy.elements.awayLogo)copy.elements.awayLogo.y=27;
-  if(copy.elements.homeScore){copy.elements.homeScore.y=48;copy.elements.awayScore.y=48;copy.elements.homeScore.size=176;copy.elements.awayScore.size=176}
-  if(copy.elements.homeName){copy.elements.homeName.y=71;copy.elements.awayName.y=71}
-  if(copy.elements.center)copy.elements.center.y=47;copy.elements.customGhost.y=14;copy.elements.customGhost.size=74;copy.elements.customGhost.opacity=.82;copy.elements.customLabel.y=91;
- }else if(theme==='classic'){
-  copy.elements.title.y=15;if(copy.elements.line)copy.elements.line.y=21;if(copy.elements.homeLogo){copy.elements.homeLogo.x=50;copy.elements.homeLogo.y=36}if(copy.elements.awayLogo){copy.elements.awayLogo.x=50;copy.elements.awayLogo.y=62}
-  if(copy.elements.homeScore){copy.elements.homeScore.x=30;copy.elements.homeScore.y=52;copy.elements.awayScore.x=70;copy.elements.awayScore.y=52}
-  if(copy.elements.homeName){copy.elements.homeName.x=50;copy.elements.homeName.y=72;copy.elements.awayName.x=50;copy.elements.awayName.y=76}
-  if(copy.elements.center){copy.elements.center.y=49;copy.elements.center.size=58}copy.elements.customGhost.y=87;copy.elements.customGhost.size=165;copy.elements.customLabel.y=94;
+ const set=(name,values)=>{if(copy.elements[name])Object.assign(copy.elements[name],values)};
+ // Each template below is a closed composition: positions are deliberate and never depend on the other formats.
+ if(format==='upcoming'||format==='start'){
+  set('title',{x:50,y:16,size:theme==='night'?86:76});set('line',{x:50,y:25,size:theme==='classic'?440:300});
+  set('homeLogo',{x:25,y:43,size:theme==='night'?270:245});set('awayLogo',{x:75,y:43,size:theme==='night'?270:245});set('center',{x:50,y:43,size:theme==='night'?120:92});
+  set('homeName',{x:25,y:58,size:32});set('awayName',{x:75,y:58,size:32});set('day',{x:34,y:70,size:35});set('time',{x:68,y:70,size:35});set('place',{x:50,y:78,size:25});
+  set('customGhost',{y:theme==='night'?10:86,size:theme==='night'?54:170,opacity:theme==='night'?1:.16});set('customLabel',{y:90,size:18});
+ }else if(format==='goal'){
+  set('title',{x:50,y:14,size:theme==='night'?50:58});set('line',{x:50,y:21,size:theme==='classic'?400:280});
+  set('homeLogo',{x:25,y:34,size:180});set('awayLogo',{x:75,y:34,size:180});set('center',{x:50,y:34,size:58});
+  set('homeScore',{x:29,y:47,size:120});set('awayScore',{x:71,y:47,size:120});set('minute',{x:50,y:58,size:28});set('scorer',{x:50,y:66,size:42});set('goalText',{x:50,y:76,size:theme==='classic'?102:122});
+  set('customGhost',{y:47,size:220,opacity:.12});set('customLabel',{y:88,size:16});
+ }else if(['halftime','secondhalf','final'].includes(format)){
+  set('title',{x:50,y:15,size:theme==='night'?58:66});set('line',{x:50,y:23,size:theme==='classic'?460:300});
+  set('homeLogo',{x:25,y:39,size:theme==='night'?235:215});set('awayLogo',{x:75,y:39,size:theme==='night'?235:215});set('center',{x:50,y:39,size:48});
+  set('homeScore',{x:27,y:55,size:theme==='night'?160:132});set('awayScore',{x:73,y:55,size:theme==='night'?160:132});set('homeScorers',{x:27,y:69,size:22});
+  set('customGhost',{y:84,size:theme==='night'?98:200,opacity:theme==='night'?.72:.13});set('customLabel',{y:91,size:17});
+ }else if(format==='lineup'){
+  set('title',{x:50,y:15,size:64});set('homeLogo',{x:50,y:8,size:120});set('homeName',{x:50,y:23,size:31});set('formation',{x:50,y:29,size:28});set('pitch',{x:50,y:58,size:310});set('awayName',{x:50,y:89,size:22});set('customGhost',{y:48,size:180,opacity:.1});set('customLabel',{y:94,size:15});
  }
  return copy
 }
