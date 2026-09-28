@@ -147,26 +147,31 @@ const storyTemplates=[
 function templateFormatCopy(format,theme){
  const copy=JSON.parse(JSON.stringify(makeDefaults()[format]));
  const sets={
-  impact:{ink:'#15110d',accent:'#ff5a00',font:'Anton',titleSize:format==='lineup'?70:58,logo:format==='lineup'?150:270},
-  night:{ink:'#f7fbff',accent:'#7dd3fc',font:'Montserrat',titleSize:format==='lineup'?61:47,logo:format==='lineup'?145:248},
-  classic:{ink:'#f6e7a8',accent:'#f4c544',font:'Bebas Neue',titleSize:format==='lineup'?70:60,logo:format==='lineup'?155:260}
+  impact:{ink:'#fff7ed',accent:'#ff4d2e',font:'Anton',titleSize:format==='lineup'?74:76,logo:format==='lineup'?170:300},
+  night:{ink:'#f7fbff',accent:'#b7ff3c',font:'Bebas Neue',titleSize:format==='lineup'?70:72,logo:format==='lineup'?160:285},
+  classic:{ink:'#f8e7a2',accent:'#f4c544',font:'Anton',titleSize:format==='lineup'?74:70,logo:format==='lineup'?165:292}
  };
  const style=sets[theme]||sets.impact;
+ copy.template={theme};
  Object.entries(copy.elements).forEach(([key,element])=>{
-  if(key==='line'){element.color=style.accent;element.size=theme==='night'?150:185;element.height=theme==='classic'?5:7;return}
+  if(key==='line'){element.color=style.accent;element.size=theme==='night'?260:220;element.height=theme==='classic'?7:10;return}
   if(key.includes('Logo')){element.size=style.logo;return}
   if(key==='pitch'){element.color=theme==='night'?'#102c42':theme==='classic'?'#174c30':'#153d28';return}
   if(key==='shirts'){element.color=style.accent;return}
   if(key==='keeper'){element.color=theme==='night'?'#d9f5ff':'#f4df78';return}
   element.color=key==='homeName'||key==='goalText'||key==='homeScore'?style.accent:style.ink;
-  if(element.font){element.font=style.font;element.weight=key==='title'||key.includes('Score')||key==='goalText'?900:700;element.spacing=theme==='classic'?2:(key==='title'?theme==='night'?3:5:0)}
+  if(element.font){element.font=style.font;element.weight=key==='title'||key.includes('Score')||key==='goalText'?900:700;element.spacing=theme==='classic'?2:(key==='title'?theme==='night'?3:5:0);element.shadow=key==='title'||key.includes('Score')||key==='goalText'}
  });
  copy.elements.title.size=style.titleSize;
- copy.elements.title.y=theme==='night'?21:24;
+ copy.elements.title.y=theme==='night'?18:20;
  copy.elements.line.y=theme==='night'?27:29;
- if(copy.elements.homeLogo){copy.elements.homeLogo.y=theme==='night'?44:42;copy.elements.awayLogo.y=theme==='night'?44:42}
- if(format==='goal'){copy.elements.goalText.size=theme==='classic'?78:94;copy.elements.scorer.color=style.ink}
- if(['halftime','secondhalf','final'].includes(format)){copy.elements.homeScore.size=theme==='classic'?96:116;copy.elements.awayScore.size=theme==='classic'?96:116}
+ if(copy.elements.homeLogo){copy.elements.homeLogo.y=theme==='night'?43:41;copy.elements.awayLogo.y=theme==='night'?43:41}
+ if(format==='upcoming'||format==='start'){copy.elements.homeName.y=59;copy.elements.awayName.y=59;copy.elements.center.y=44;copy.elements.center.size=110}
+ if(format==='goal'){copy.elements.title.y=17;copy.elements.goalText.size=theme==='classic'?104:128;copy.elements.goalText.y=76;copy.elements.scorer.y=66;copy.elements.scorer.color=style.ink}
+ if(['halftime','secondhalf','final'].includes(format)){copy.elements.homeScore.size=theme==='classic'?122:142;copy.elements.awayScore.size=theme==='classic'?122:142;copy.elements.homeScore.y=57;copy.elements.awayScore.y=57}
+ const labels={impact:'BRUJAS FPC',night:'MATCHDAY',classic:'FÚTBOL DE BARRIO'};
+ copy.elements.customGhost={type:'text',x:50,y:50,size:theme==='night'?215:240,font:'Anton',weight:900,spacing:-2,color:theme==='impact'?'#e6382a':theme==='night'?'#284261':'#345237',opacity:.22,content:format==='final'?'90’':format==='goal'?'GOOOL':labels[theme]};
+ copy.elements.customLabel={type:'text',x:50,y:88,size:24,font:'Montserrat',weight:900,spacing:7,color:style.ink,content:format==='final'?'RESULTADO FINAL':format==='goal'?'LA PASIÓN SE FESTEJA':format==='upcoming'?'VIVILO CON NOSOTROS':'BRUJAS FPC'};
  return copy
 }
 function templateNameForFormat(format){return formatNames[format]||format}
@@ -176,7 +181,7 @@ const applicableFor=f=>[...applicable[f],...Object.keys(formats[f].elements).fil
 const save=()=>{localStorage.setItem('brujasMatch',JSON.stringify(state));localStorage.setItem('brujasFormats',JSON.stringify(formats));localStorage.setItem('brujasPalette',JSON.stringify(palette));localStorage.setItem('brujasDesigns',JSON.stringify(savedDesigns));localStorage.setItem('brujasActiveDesign',activeDesign);localStorage.setItem('brujasTeams',JSON.stringify(teams));window.queueBrujasCloudSave?.()};
 const esc=s=>String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const sampleEvent=f=>f==='lineup'?lineupPreviewEvent():({type:f,title:titleDefaults[f],homeScore:f==='start'||f==='upcoming'?0:2,awayScore:f==='start'||f==='upcoming'?0:1,scorer:f==='goal'?'JUGADOR BRUJAS':'',minute:f==='goal'?'37':'',side:f==='goal'?'home':'',icon:'●'});
-function itemStyle(k,c){const e=c.elements[k];return `left:${e.x}%;top:${e.y}%;font-size:${e.size/10.8}cqw;color:${e.color};font-family:'${e.font}',sans-serif;font-weight:${e.weight};letter-spacing:${e.spacing/10.8}cqw`}
+function itemStyle(k,c){const e=c.elements[k];return `left:${e.x}%;top:${e.y}%;font-size:${e.size/10.8}cqw;color:${e.color};font-family:'${e.font}',sans-serif;font-weight:${e.weight};letter-spacing:${e.spacing/10.8}cqw;opacity:${e.opacity??1};text-shadow:${e.shadow?'0 7px 0 #0007,0 13px 28px #0008':'none'}`}
 const editClass=(k,on)=>on?` editable ${k===editElement?'selected':''}`:'';
 function logoHTML(src,k,c,on=false){const e=c.elements[k],sty=`left:${e.x}%;top:${e.y}%;width:${e.size/10.8}cqw;height:${e.size/10.8}cqw`,at=on?` data-element="${k}"`:'';return src?`<img class="story-item${editClass(k,on)}" ${at} style="${sty};object-fit:contain" src="${src}" alt="">`:`<div class="story-item placeholder-logo${editClass(k,on)}" ${at} style="${sty}">ESCUDO</div>`}
 function floatingEditor(c){const e=c.elements[editElement],isLine=editElement==='line'||e.type==='line',isLogo=editElement.includes('Logo'),top=Math.min(e.y+9,79),canEditText=editElement==='title'||(editElement.startsWith('custom')&&e.type==='text'),content=editElement==='title'?c.title:e.content;return `<div class="floating-editor" data-floating style="left:50%;top:${top}%"><div class="floating-head"><span>${esc(elementNames[editElement]||(isLine?'Línea agregada':'Texto agregado'))}</span><button type="button" data-float-close>×</button></div><div class="floating-grid">${canEditText?`<div class="floating-control" style="grid-column:1/-1"><label>Texto</label><input data-float-content value="${esc(content||'')}"></div>`:''}<div class="floating-control"><label>Horizontal</label><input data-float-key="x" type="range" min="0" max="100" value="${e.x}"></div><div class="floating-control"><label>Vertical</label><input data-float-key="y" type="range" min="0" max="100" value="${e.y}"></div><div class="floating-control"><label>${isLine?'Ancho':'Tamaño'}</label><input data-float-key="size" type="range" min="8" max="400" value="${e.size}"></div>${isLine?`<div class="floating-control"><label>Alto</label><input data-float-key="height" type="range" min="1" max="80" value="${e.height||6}"></div>`:''}${!isLine&&!isLogo?`<div class="floating-control"><label>Fuente</label><select data-float-font>${fonts.map(f=>`<option value="${f}" ${f===e.font?'selected':''}>${f}</option>`).join('')}</select></div><div class="floating-control"><label>Separar letras</label><input data-float-key="spacing" type="range" min="-2" max="30" value="${e.spacing||0}"></div><label class="floating-check"><input data-float-bold type="checkbox" ${e.weight>=700?'checked':''}> Negrita</label>`:''}<div class="floating-control"><label>Color</label><input data-float-color type="color" value="${e.color}"></div></div>${!editElement.startsWith('custom')?`<label class="floating-check" style="margin-top:7px"><input data-float-sync type="checkbox" ${savedDesigns[activeDesign]?.syncGeometry?.[editElement]?'checked':''}> Igualar posición y tamaño en todas</label>`:''}</div>`}
@@ -469,7 +474,16 @@ $('#applyColor').onclick=()=>{const scope=$('#colorScope').value,color=$('#color
 $('#saveFormat').onclick=()=>{if(!activeDesign||!savedDesigns[activeDesign])return toast('Seleccioná un diseño guardado');savedDesigns[activeDesign].formats=JSON.parse(JSON.stringify(formats));save();render();toast('Diseño completo guardado')};$('#resetFormat').onclick=()=>{const format=editFormat;appConfirm('¿Restaurar este tipo de historia al diseño original?',()=>{formats[format]=makeDefaults()[format];Object.entries(formats[format].elements).forEach(([k,e])=>{e.font=e.font||'Arial';e.color=e.color||defaultColor(k);e.weight=e.weight||defaultWeight(k);e.spacing=e.spacing??0;if(k==='line')e.height=6});render();toast('Tipo de historia restaurado')})};
 const imgLoad=src=>new Promise(ok=>{if(!src)return ok(null);const i=new Image;i.onload=()=>ok(i);i.onerror=()=>ok(null);i.src=src});
 function drawContain(ctx,img,x,y,size){const r=Math.min(size/img.width,size/img.height),w=img.width*r,h=img.height*r;ctx.drawImage(img,x-w/2,y-h/2,w,h)}
-function drawText(ctx,text,e){ctx.fillStyle=e.color;ctx.font=`${e.weight||700} ${e.size}px "${e.font}"`;ctx.letterSpacing=(e.spacing||0)+'px';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,e.x*10.8,e.y*19.2);ctx.letterSpacing='0px'}
+function drawText(ctx,text,e){ctx.save();ctx.globalAlpha=e.opacity??1;ctx.fillStyle=e.color;ctx.font=`${e.weight||700} ${e.size}px "${e.font}"`;ctx.letterSpacing=(e.spacing||0)+'px';ctx.textAlign='center';ctx.textBaseline='middle';if(e.shadow){ctx.shadowColor='#000b';ctx.shadowBlur=22;ctx.shadowOffsetY=10}ctx.fillText(text,e.x*10.8,e.y*19.2);ctx.restore()}
+function drawPosterBackground(ctx,theme){
+ const g=ctx.createLinearGradient(0,0,1080,1920);
+ const palette=theme==='night'?['#061321','#182d4d','#071019']:theme==='classic'?['#081b12','#1c4b2d','#07130d']:['#180a0b','#55141a','#120607'];
+ g.addColorStop(0,palette[0]);g.addColorStop(.52,palette[1]);g.addColorStop(1,palette[2]);ctx.fillStyle=g;ctx.fillRect(0,0,1080,1920);
+ ctx.save();ctx.globalAlpha=.42;ctx.translate(540,910);ctx.rotate(-.23);ctx.fillStyle=theme==='night'?'#b7ff3c':theme==='classic'?'#f4c544':'#ff4d2e';for(let i=-4;i<5;i++)ctx.fillRect(-1050,i*195,2100,58);ctx.restore();
+ const glow=ctx.createRadialGradient(540,650,20,540,650,760);glow.addColorStop(0,theme==='night'?'#75a8ff55':theme==='classic'?'#d2af4848':'#fa492e55');glow.addColorStop(1,'#00000000');ctx.fillStyle=glow;ctx.fillRect(0,0,1080,1920);
+ ctx.save();ctx.globalAlpha=.18;ctx.fillStyle='#fff';for(let i=0;i<1200;i++){const px=(i*131)%1080,py=(i*317)%1920;ctx.fillRect(px,py,(i%3)+1,(i%2)+1)}ctx.restore();
+ ctx.fillStyle='#00000038';ctx.fillRect(0,0,1080,1920)
+}
 function drawMultilineText(ctx,lines,e){
  ctx.save();ctx.fillStyle=e.color;ctx.font=`${e.weight||700} ${e.size}px "${e.font}"`;ctx.letterSpacing=(e.spacing||0)+'px';ctx.textAlign='center';ctx.textBaseline='middle';
  const gap=e.size*1.35,startY=e.y*19.2;
@@ -497,7 +511,7 @@ async function buildStoryImage(event=selectedEvent){
  const x=c.getContext('2d');
  const [base,hi,ai]=await Promise.all([imgLoad('assets/story-base.jpg'),imgLoad(storyState.homeLogo),imgLoad(storyState.awayLogo)]);
  x.clearRect(0,0,c.width,c.height);
- if(base)x.drawImage(base,0,0,1080,1920);else{x.fillStyle='#fff';x.fillRect(0,0,1080,1920)}
+ if(cfg.template?.theme)drawPosterBackground(x,cfg.template.theme);else if(base)x.drawImage(base,0,0,1080,1920);else{x.fillStyle='#fff';x.fillRect(0,0,1080,1920)}
  await Promise.all(Object.values(cfg.elements).filter(e=>e.font).map(e=>document.fonts.load(`${e.weight||700} ${e.size}px "${e.font}"`).catch(()=>null)));
  drawText(x,(f==='goal'?periodTitle:cfg.title).toUpperCase(),cfg.elements.title);
  const ln=cfg.elements.line;x.fillStyle=ln.color;x.fillRect(ln.x*10.8-ln.size/2,ln.y*19.2-ln.height/2,ln.size,ln.height);
@@ -736,7 +750,7 @@ async function buildLineupImage(event){
  const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;
  const ctx=canvas.getContext('2d'),[base,logo]=await Promise.all([imgLoad('assets/story-base.jpg'),imgLoad(ev.homeLogo)]);
  await Promise.all(Object.values(e).filter(el=>el.font).map(el=>document.fonts.load((el.weight||700)+' '+el.size+'px "'+el.font+'"').catch(()=>null)));
- ctx.fillStyle='#f5f5f2';ctx.fillRect(0,0,1080,1920);if(base)ctx.drawImage(base,0,0,1080,1920);
+ if(cfg.template?.theme)drawPosterBackground(ctx,cfg.template.theme);else{ctx.fillStyle='#f5f5f2';ctx.fillRect(0,0,1080,1920);if(base)ctx.drawImage(base,0,0,1080,1920)}
  const pe=e.pitch,w=pe.size*3,h=w*1030/930,left=pe.x*10.8-w/2,top=pe.y*19.2-h/2;
  ctx.save();ctx.translate(left,top);ctx.scale(w/930,h/1030);
  ctx.fillStyle=pe.color;ctx.fillRect(0,0,930,1030);
