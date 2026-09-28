@@ -138,6 +138,38 @@ let teams=JSON.parse(localStorage.getItem('brujasTeams')||'[]'),editingTeamId=nu
 if(!Object.keys(savedDesigns).length){const names=new Set;Object.values(oldPresets).forEach(group=>Object.keys(group||{}).forEach(n=>names.add(n)));names.forEach(name=>{savedDesigns[name]={formats:{},syncGeometry:{}};Object.keys(formatNames).forEach(f=>savedDesigns[name].formats[f]=JSON.parse(JSON.stringify(oldPresets[f]?.[name]||makeDefaults()[f]))) });activeDesign=Object.values(oldActive).find(n=>savedDesigns[n])||''}
 Object.values(savedDesigns).forEach(d=>d.syncGeometry=d.syncGeometry||{});
 let editFormat='upcoming',editElement='title',floatingOpen=false;
+let templateFormat='upcoming';
+const storyTemplates=[
+ {id:'impact',name:'Impacto',description:'Titulares fuertes y energía naranja',className:'template-impact'},
+ {id:'night',name:'Noche de partido',description:'Contraste azul para partidos nocturnos',className:'template-night'},
+ {id:'classic',name:'Clásico',description:'Verde y dorado, con estilo institucional',className:'template-classic'}
+];
+function templateFormatCopy(format,theme){
+ const copy=JSON.parse(JSON.stringify(makeDefaults()[format]));
+ const sets={
+  impact:{ink:'#15110d',accent:'#ff5a00',font:'Anton',titleSize:format==='lineup'?70:58,logo:format==='lineup'?150:270},
+  night:{ink:'#f7fbff',accent:'#7dd3fc',font:'Montserrat',titleSize:format==='lineup'?61:47,logo:format==='lineup'?145:248},
+  classic:{ink:'#f6e7a8',accent:'#f4c544',font:'Bebas Neue',titleSize:format==='lineup'?70:60,logo:format==='lineup'?155:260}
+ };
+ const style=sets[theme]||sets.impact;
+ Object.entries(copy.elements).forEach(([key,element])=>{
+  if(key==='line'){element.color=style.accent;element.size=theme==='night'?150:185;element.height=theme==='classic'?5:7;return}
+  if(key.includes('Logo')){element.size=style.logo;return}
+  if(key==='pitch'){element.color=theme==='night'?'#102c42':theme==='classic'?'#174c30':'#153d28';return}
+  if(key==='shirts'){element.color=style.accent;return}
+  if(key==='keeper'){element.color=theme==='night'?'#d9f5ff':'#f4df78';return}
+  element.color=key==='homeName'||key==='goalText'||key==='homeScore'?style.accent:style.ink;
+  if(element.font){element.font=style.font;element.weight=key==='title'||key.includes('Score')||key==='goalText'?900:700;element.spacing=theme==='classic'?2:(key==='title'?theme==='night'?3:5:0)}
+ });
+ copy.elements.title.size=style.titleSize;
+ copy.elements.title.y=theme==='night'?21:24;
+ copy.elements.line.y=theme==='night'?27:29;
+ if(copy.elements.homeLogo){copy.elements.homeLogo.y=theme==='night'?44:42;copy.elements.awayLogo.y=theme==='night'?44:42}
+ if(format==='goal'){copy.elements.goalText.size=theme==='classic'?78:94;copy.elements.scorer.color=style.ink}
+ if(['halftime','secondhalf','final'].includes(format)){copy.elements.homeScore.size=theme==='classic'?96:116;copy.elements.awayScore.size=theme==='classic'?96:116}
+ return copy
+}
+function templateNameForFormat(format){return formatNames[format]||format}
 const applicable={lineup:Object.keys(lineupElements),upcoming:['title','line','homeLogo','center','awayLogo','homeName','awayName','day','time','place'],start:['title','line','homeLogo','center','awayLogo','homeName','awayName'],goal:['title','line','homeLogo','center','awayLogo','homeScore','awayScore','minute','scorer','goalText'],halftime:['title','line','homeLogo','center','awayLogo','homeScore','awayScore'],secondhalf:['title','line','homeLogo','center','awayLogo','homeScore','awayScore'],final:['title','line','homeLogo','center','awayLogo','homeScore','awayScore','homeScorers']};
 const elementNames={formation:'Formación',pitch:'Cancha',shirts:'Camisetas',keeper:'Camiseta del arquero',playerLabels:'Nombres de jugadores',jerseyNumbers:'Dorsales',title:'Título',line:'Línea naranja',homeLogo:'Escudo local',center:'VS / marcador',awayLogo:'Escudo visitante',homeName:'Nombre local',awayName:'Nombre visitante',detail:'Detalle',homeScore:'Goles local',awayScore:'Goles visitante',minute:'Minuto',scorer:'Goleador local',goalText:'Texto GOOOL',homeScorers:'Goleadores del local',day:'Día',time:'Hora',place:'Lugar'};
 const applicableFor=f=>[...applicable[f],...Object.keys(formats[f].elements).filter(k=>k.startsWith('custom'))];
@@ -216,12 +248,39 @@ function render(){
    const title=event.type==='goal'?(event.side==='home'?`Gol de ${event.scorer||state.homeName} · ${score}`:`Gol visitante · ${score}`):(names[event.type]||event.title);
    return `<div class="log"><div class="log-time">${esc(marker)}</div><div class="log-icon">${uiIcon(iconNames[event.type]||'goal')}</div><div class="log-info"><strong>${esc(title)}</strong></div><div class="log-actions"><button data-story="${index}" aria-label="Ver historia">${uiIcon('eye')}<span>Ver</span></button><button data-undo="${index}" aria-label="Deshacer evento">${uiIcon('undo')}<span>Deshacer</span></button></div></div>`
  }).join(''):'<div class="timeline-empty">Los eventos del partido aparecerán acá.</div>';
- renderPresetChooser();renderDesigner();renderTeams();save()
+ renderPresetChooser();renderTemplateLibrary();renderDesigner();renderTeams();save()
 }
 function presetOptions(){const names=Object.keys(savedDesigns);return '<option value="">Seleccioná un diseño</option>'+names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('')}
 function activateDesign(name){if(name&&savedDesigns[name]){formats=JSON.parse(JSON.stringify(savedDesigns[name].formats));Object.keys(formatNames).forEach(f=>hydrateFormat(f))}activeDesign=name;save();render()}
 function renderPresetChooser(){
  $('#presetChooser').innerHTML=presetOptions();$('#presetChooser').value=savedDesigns[activeDesign]?activeDesign:''
+}
+function renderTemplateLibrary(){
+ const select=$('#templateFormatSelect');
+ if(!select)return;
+ if(!select.options.length)select.innerHTML=Object.entries(formatNames).map(([id,name])=>`<option value="${id}">${name}</option>`).join('');
+ select.value=templateFormat;
+ const label=templateNameForFormat(templateFormat).toUpperCase();
+ $('#templateCards').innerHTML=storyTemplates.map(template=>`<article class="template-card">
+  <div class="template-thumb ${template.className}"><span class="mini-title">${label}</span><i class="mini-line"></i><span class="mini-score">${templateFormat==='upcoming'||templateFormat==='start'?'VS':'2–1'}</span><span class="mini-meta">TU EQUIPO · HISTORIA</span></div>
+  <div class="template-card-body"><strong>${template.name}</strong><span>${template.description}</span><button class="secondary" type="button" data-use-template="${template.id}">Usar</button></div>
+ </article>`).join('');
+}
+function ensureDesignForTemplate(){
+ if(activeDesign&&savedDesigns[activeDesign])return true;
+ let name='Mi diseño';let index=2;while(savedDesigns[name])name=`Mi diseño ${index++}`;
+ savedDesigns[name]={formats:JSON.parse(JSON.stringify(formats)),syncGeometry:{}};
+ activeDesign=name;
+ return true
+}
+function useStoryTemplate(theme){
+ if(!storyTemplates.some(template=>template.id===theme))return;
+ ensureDesignForTemplate();
+ formats[templateFormat]=templateFormatCopy(templateFormat,theme);
+ hydrateFormat(templateFormat);
+ savedDesigns[activeDesign].formats=JSON.parse(JSON.stringify(formats));
+ editFormat=templateFormat;editElement='title';floatingOpen=false;
+ save();render();toast(`${storyTemplates.find(template=>template.id===theme).name} aplicada a ${templateNameForFormat(templateFormat).toLowerCase()}`)
 }
 function teamOptions(selected=''){return '<option value="">Seleccioná un equipo</option>'+teams.map(t=>`<option value="${t.id}" ${t.id===selected?'selected':''}>${esc(t.name)}</option>`).join('')}
 function selectedTeamId(side){const found=teams.find(t=>t.name===state[side+'Name']&&t.logo===state[side+'Logo']);return found?.id||''}
@@ -380,6 +439,8 @@ function queueDesignerCanvas(){
  },80)
 }
 $('#formatSelect').onchange=e=>{editFormat=e.target.value;editElement=applicableFor(editFormat)[0];floatingOpen=false;renderDesigner()};$('#elementSelect').onchange=e=>{editElement=e.target.value;floatingOpen=false;renderDesigner()};
+$('#templateFormatSelect').onchange=e=>{templateFormat=e.target.value;renderTemplateLibrary()};
+$('#templateCards').onclick=e=>{const button=e.target.closest('[data-use-template]');if(button)useStoryTemplate(button.dataset.useTemplate)};
 $('#designerStory').onclick=e=>{if(e.target.closest('[data-float-close]')){floatingOpen=false;renderDesigner();return}const item=e.target.closest('[data-element]');if(item?.dataset.element){editElement=item.dataset.element;floatingOpen=true;renderDesigner()}};
 $('#designerStory').oninput=e=>{const key=e.target.dataset.floatKey,el=formats[editFormat].elements[editElement],node=$('#designerStory').querySelector(`[data-element="${editElement}"]`);if(e.target.matches('[data-float-content]')){if(editElement==='title')formats[editFormat].title=e.target.value;else el.content=e.target.value;node.textContent=e.target.value}if(key){setGeometry(key,+e.target.value);if(key==='x')node.style.left=e.target.value+'%';if(key==='y')node.style.top=e.target.value+'%';if(key==='size'){if(editElement==='line'||el.type==='line')node.style.width=(e.target.value/10.8)+'cqw';else if(editElement.includes('Logo')){node.style.width=(e.target.value/10.8)+'cqw';node.style.height=(e.target.value/10.8)+'cqw'}else node.style.fontSize=(e.target.value/10.8)+'cqw'}if(key==='height')node.style.height=(e.target.value/10.8)+'cqw';if(key==='spacing')node.style.letterSpacing=(e.target.value/10.8)+'cqw'}if(e.target.matches('[data-float-color]')){el.color=e.target.value;node.style.color=e.target.value;if(editElement==='line'||el.type==='line')node.style.background=e.target.value};queueDesignerCanvas()};
 $('#designerStory').onchange=e=>{const el=formats[editFormat].elements[editElement];if(e.target.matches('[data-float-font]'))el.font=e.target.value;if(e.target.matches('[data-float-bold]'))el.weight=e.target.checked?900:400;if(e.target.matches('[data-float-sync]')){$('#applyGeometryAll').checked=e.target.checked;$('#applyGeometryAll').dispatchEvent(new Event('change'))}save();renderDesigner()};
