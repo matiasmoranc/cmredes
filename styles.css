@@ -71,3 +71,7 @@
  .quick-crest-sliders{width:100%}
  .quick-crest-body>.form-grid{grid-template-columns:1fr}
 }
+
+/* El canvas es la única capa visible del editor; los elementos invisibles conservan el clic. */
+.story.canvas-editor>.story-item:not(.floating-editor){opacity:0!important}
+.asset-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:14px 0}.upload-control{min-height:46px;display:flex;align-items:center;justify-content:center;text-align:center}.background-controls{margin:12px 0;padding:4px 0 1px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.add-elements{grid-template-columns:1fr 1fr}.add-elements button{padding:12px 8px;font-size:12px}
