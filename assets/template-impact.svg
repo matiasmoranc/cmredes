@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#120506"/><stop offset=".5" stop-color="#54131b"/><stop offset="1" stop-color="#100405"/></linearGradient>
+    <linearGradient id="slash" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#ff4c30" stop-opacity=".92"/><stop offset="1" stop-color="#ff8a30" stop-opacity=".15"/></linearGradient>
+    <filter id="noise"><feTurbulence baseFrequency=".9" numOctaves="3" stitchTiles="stitch"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 .09 0"/></filter>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#bg)"/>
+  <path d="M-210 360 1170 -120v285L-210 645zM-210 960 1170 480v120L-210 1080zM-210 1570 1170 1090v74L-210 1644z" fill="url(#slash)"/>
+  <path d="M0 0h1080v104h-1080zM0 1810h1080v110H0z" fill="#070304" opacity=".82"/>
+  <path d="M0 0h22v1920H0zM1058 0h22v1920h-22z" fill="#ff5635" opacity=".72"/>
+  <g fill="none" stroke="#ff7552" stroke-opacity=".28"><path d="M65 286h950M65 1495h950"/><path d="M65 278v18M1015 278v18M65 1487v18M1015 1487v18"/></g>
+  <rect width="1080" height="1920" filter="url(#noise)" opacity=".72"/>
+</svg>
