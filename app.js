@@ -132,7 +132,7 @@ function hydrateFormat(f){
 Object.keys(formatNames).forEach(f=>hydrateFormat(f));
 // This version starts from neutral editable formats; old built-in template decorations are not retained.
 Object.keys(formatNames).forEach(f=>{delete formats[f].template;delete formats[f].elements.customGhost;delete formats[f].elements.customLabel});
-const fonts=['Arial','Anton','Bebas Neue','Oswald','Barlow Condensed','Montserrat','Roboto Condensed','Poppins','Impact','Georgia','Trebuchet MS','Verdana','Playfair Display','Times New Roman','Courier New','Tahoma'];
+const fonts=['Anton','Bebas Neue','Black Ops One','Bangers','Rubik Wet Paint','Permanent Marker','Londrina Solid','Bayon','Righteous','Oswald','Barlow Condensed','Montserrat','Roboto Condensed','Poppins','Impact','Arial','Georgia','Trebuchet MS','Verdana','Playfair Display','Times New Roman','Courier New','Tahoma'];
 let palette=JSON.parse(localStorage.getItem('brujasPalette')||'["#ff5a00","#090909","#ffffff","#1b5e20","#1565c0","#fbc02d"]');
 const oldPresets=JSON.parse(localStorage.getItem('brujasSavedPresets')||'{}'),oldActive=JSON.parse(localStorage.getItem('brujasActivePresets')||'{}');
 let savedDesigns=JSON.parse(localStorage.getItem('brujasDesigns')||'{}'),activeDesign=localStorage.getItem('brujasActiveDesign')||'';
@@ -491,8 +491,19 @@ $('#updatePreset').onclick=()=>{if(!activeDesign||!savedDesigns[activeDesign])re
 $('#deletePreset').onclick=()=>{if(!activeDesign||!savedDesigns[activeDesign])return toast('Seleccioná un diseño guardado');const name=activeDesign;appConfirm(`¿Eliminar el diseño "${name}"?`,()=>{delete savedDesigns[name];activeDesign='';save();render();toast('Diseño eliminado')})};
 $('#customTitle').oninput=e=>{formats[editFormat].title=e.target.value;renderDesigner()};
 $('#customContent').oninput=e=>{formats[editFormat].elements[editElement].content=e.target.value;renderDesigner()};
-function addCustom(type){const key='custom'+Date.now();formats[editFormat].elements[key]={type,x:50,y:type==='line'?78:75,size:type==='line'?220:38,height:6,font:'Arial',weight:700,spacing:0,color:type==='line'?'#ff5a00':'#090909',content:type==='text'?'NUEVO TEXTO':''};editElement=key;save();renderDesigner();toast(type==='line'?'Línea agregada':'Texto agregado')}
-$('#addTextElement').onclick=()=>addCustom('text');$('#addLineElement').onclick=()=>addCustom('line');$('#deleteElement').onclick=()=>{if(!editElement.startsWith('custom'))return;const element=editElement,format=editFormat;appConfirm('¿Eliminar este elemento?',()=>{delete formats[format].elements[element];editElement='title';save();renderDesigner();toast('Elemento eliminado')})};
+function addCustom(type){const key='custom'+Date.now();formats[editFormat].elements[key]={type,x:50,y:type==='line'?78:75,size:type==='line'?220:38,height:6,font:'Anton',weight:700,spacing:0,color:type==='line'?'#ff5a00':'#090909',content:type==='text'?'NUEVO TEXTO':''};editElement=key;save();renderDesigner();toast(type==='line'?'Línea agregada':'Texto agregado')}
+function duplicateElement(){
+ const source=formats[editFormat].elements[editElement];
+ if(!source)return;
+ const key='custom'+Date.now(),copy=JSON.parse(JSON.stringify(source));
+ copy.x=Math.min(94,(copy.x??50)+5);copy.y=Math.min(94,(copy.y??50)+5);
+ if(editElement==='title'){copy.type='text';copy.content=formats[editFormat].title}
+ else if(editElement==='line'){copy.type='line'}
+ else if(editElement==='homeLogo'||editElement==='awayLogo'){copy.type='image';copy.src=editElement==='homeLogo'?state.homeLogo:state.awayLogo;if(!copy.src)return toast('Primero cargá ese escudo')}
+ else if(!copy.type){copy.type='text';copy.content=editElement==='center'?'VS':editElement==='homeName'?(state.homeName||'LOCAL'):editElement==='awayName'?(state.awayName||'VISITANTE'):'TEXTO'}
+ formats[editFormat].elements[key]=copy;editElement=key;save();renderDesigner();toast('Elemento duplicado')
+}
+$('#addTextElement').onclick=()=>addCustom('text');$('#addLineElement').onclick=()=>addCustom('line');$('#duplicateElement').onclick=duplicateElement;$('#deleteElement').onclick=()=>{if(!editElement.startsWith('custom'))return;const element=editElement,format=editFormat;appConfirm('¿Eliminar este elemento?',()=>{delete formats[format].elements[element];editElement='title';save();renderDesigner();toast('Elemento eliminado')})};
 function imageToData(file,done){if(!file)return;compressImage(file,done)}
 $('#backgroundImage').onchange=e=>{imageToData(e.target.files?.[0],src=>{formats[editFormat].backgroundImage={src,x:50,y:50,size:1080,opacity:1};save();renderDesigner();toast('Fondo cargado')});e.target.value=''};
 $('#removeBackground').onclick=()=>{delete formats[editFormat].backgroundImage;save();renderDesigner();toast('Fondo quitado')};
