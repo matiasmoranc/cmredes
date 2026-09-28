@@ -91,6 +91,10 @@
     <div class="designer-grid">
       <div class="card">
         <h2>Editor de formatos</h2><p class="sub">Cada tipo de historia guarda su propio diseño. Los cambios se aplican a todas las historias nuevas de ese formato.</p>
+        <section class="template-library" aria-labelledby="templateLibraryTitle">
+          <div class="template-library-head"><div><span class="eyebrow">DISEÑOS LISTOS</span><h3 id="templateLibraryTitle">Plantillas para historias</h3><p>Elegí un tipo, mirá las opciones y usá una como punto de partida. Después podés modificarla libremente.</p></div><label class="template-type"><span>Tipo</span><select id="templateFormatSelect"></select></label></div>
+          <div id="templateCards" class="template-cards"></div>
+        </section>
         <div class="preset-bar">
           <div class="field"><label>Diseño guardado</label><select id="savedPresetSelect"></select></div>
           <div class="preset-actions"><input id="presetName" placeholder="Nombre del nuevo diseño"><button id="savePreset" class="primary">Crear diseño</button><button id="deletePreset" class="danger">Eliminar</button></div>
