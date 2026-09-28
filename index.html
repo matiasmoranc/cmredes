@@ -7,7 +7,7 @@
   <title>Brujas Redes | Panel de partido</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@400;700;900&family=Bebas+Neue&family=Montserrat:wght@400;700;900&family=Oswald:wght@400;700&family=Playfair+Display:wght@400;700;900&family=Poppins:wght@400;700;900&family=Roboto+Condensed:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@400;700;900&family=Bangers&family=Bayon&family=Bebas+Neue&family=Black+Ops+One&family=Londrina+Solid:wght@400;900&family=Montserrat:wght@400;700;900&family=Oswald:wght@400;700&family=Permanent+Marker&family=Playfair+Display:wght@400;700;900&family=Poppins:wght@400;700;900&family=Righteous&family=Roboto+Condensed:wght@400;700;900&family=Rubik+Wet+Paint&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=20260925-crest3">
 </head>
 <body>
@@ -105,7 +105,7 @@
         </div>
         <div class="asset-tools"><label class="secondary upload-control">Cargar fondo<input id="backgroundImage" type="file" accept="image/*" hidden></label><label class="secondary upload-control">+ Agregar imagen<input id="addImageElement" type="file" accept="image/*" hidden></label><button id="removeBackground" class="secondary">Quitar fondo</button></div>
         <div id="backgroundControls" class="background-controls hidden"><div class="editor-row"><label>Fondo horizontal</label><input id="backgroundX" type="range" min="0" max="100" value="50"><output id="backgroundXOut"></output></div><div class="editor-row"><label>Fondo vertical</label><input id="backgroundY" type="range" min="0" max="100" value="50"><output id="backgroundYOut"></output></div><div class="editor-row"><label>Tamaño de fondo</label><input id="backgroundSize" type="range" min="1080" max="3000" value="1080"><output id="backgroundSizeOut"></output></div><div class="editor-row"><label>Transparencia fondo</label><input id="backgroundOpacity" type="range" min="0" max="100" value="100"><output id="backgroundOpacityOut"></output></div></div>
-        <div class="add-elements"><button id="addTextElement" class="secondary">+ Agregar texto</button><button id="addLineElement" class="secondary">+ Agregar línea</button><button id="deleteElement" class="danger" disabled>Eliminar</button></div>
+        <div class="add-elements"><button id="addTextElement" class="secondary">+ Agregar texto</button><button id="addLineElement" class="secondary">+ Agregar línea</button><button id="duplicateElement" class="secondary">Duplicar elemento</button><button id="deleteElement" class="danger" disabled>Eliminar</button></div>
         <div class="section-title">Posición y tamaño</div>
         <label class="notice" style="display:flex;align-items:center;gap:10px;margin:0 0 14px"><input id="applyGeometryAll" type="checkbox" style="width:21px;height:21px;accent-color:var(--green)"> Aplicar posición y tamaño de este elemento en todos los tipos de historia del diseño</label>
         <div class="editor-row"><label>Horizontal</label><input id="posX" type="range" min="0" max="100"><output id="posXOut"></output></div>
