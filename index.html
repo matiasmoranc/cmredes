@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#090d0b">
+  <title>Brujas Redes | Panel de partido</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@400;700;900&family=Bebas+Neue&family=Montserrat:wght@400;700;900&family=Oswald:wght@400;700&family=Playfair+Display:wght@400;700;900&family=Poppins:wght@400;700;900&family=Roboto+Condensed:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260925-crest3">
+</head>
+<body>
+<section id="roleGate" class="role-gate">
+  <div class="role-box">
+    <div class="brand role-brand"><div class="brand-mark">⚡</div><h1>Brujas Redes</h1></div>
+    <div class="role-grid">
+      <button id="chooseOperator" class="role-card operator cm-card" type="button"><h3>CM</h3><strong>Ingresar <span aria-hidden="true">→</span></strong></button>
+      <button id="chooseAdmin" class="role-card admin-card" type="button"><span class="role-icon ui-icon" data-ui-icon="settings" aria-hidden="true"></span><h3>Administrador</h3><strong aria-hidden="true">›</strong></button>
+    </div>
+    <div id="adminPasswordBox" class="admin-password hidden">
+      <label for="adminPassword">Contraseña de administrador</label>
+      <div class="admin-password-actions"><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Ingresá la contraseña"><button id="confirmAdmin" class="primary" type="button">Ingresar</button></div>
+      <p id="adminPasswordError" class="admin-error" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+<main id="mainApp" class="app role-locked">
+  <header class="top"><div class="brand"><div class="brand-mark">⚡</div><div><h1>Brujas Redes</h1></div></div><div class="top-actions"><div class="status" id="syncStatus" data-admin-only><i></i>Conectando con la nube…</div><span id="roleBadge" class="role-badge"></span><button id="changeRole" class="change-role" type="button">Cambiar rol</button></div></header>
+  <nav class="tabs"><button class="tab active" data-view="setup" data-admin-only>Preparar partido</button><button class="tab" data-view="live">Panel en vivo</button><button class="tab" data-view="teams" data-admin-only>Equipos</button><button class="tab" data-view="designer" data-admin-only>Editar formatos</button></nav>
+
+  <section id="setup" class="view active" data-admin-only>
+    <div class="setup-grid">
+      <div class="card">
+        <h2>Configuración del partido</h2><p class="sub">Cargá los equipos una vez. Después, durante el partido, todo se resuelve con pocos toques.</p>
+        <div class="section-title">Equipo local</div>
+        <div class="field team-select"><label>Seleccionar equipo guardado</label><select id="homeTeamSelect"></select></div>
+
+        <div class="section-title">Equipo visitante</div>
+        <div class="field team-select"><label>Seleccionar equipo guardado</label><select id="awayTeamSelect"></select></div>
+
+        <details class="quick-crests"><summary>Ajustar escudos</summary>
+<div class="quick-crest-body">
+<div class="form-grid"><div class="field"><label for="quickCrestSide">Escudo</label><select id="quickCrestSide"><option value="homeLogo">Local</option><option value="awayLogo">Visitante</option></select></div></div>
+<div class="quick-crest-work"><img id="quickCrestPreview" alt="Vista previa del próximo partido"><div class="quick-crest-sliders">
+<div class="quick-crest-row"><label for="quickCrest-size">Tamaño</label><output id="quickCrestOut-size"></output><button type="button" class="secondary crest-step" data-crest-key="size" data-crest-step="-1" aria-label="Disminuir tamaño">−</button><input id="quickCrest-size" data-crest-range="size" type="range" min="40" max="400" step="1"><button type="button" class="secondary crest-step" data-crest-key="size" data-crest-step="1" aria-label="Aumentar tamaño">+</button></div><div class="quick-crest-row"><label for="quickCrest-x">Horizontal</label><output id="quickCrestOut-x"></output><button type="button" class="secondary crest-step" data-crest-key="x" data-crest-step="-0.5" aria-label="Disminuir horizontal">−</button><input id="quickCrest-x" data-crest-range="x" type="range" min="0" max="100" step="0.5"><button type="button" class="secondary crest-step" data-crest-key="x" data-crest-step="0.5" aria-label="Aumentar horizontal">+</button></div><div class="quick-crest-row"><label for="quickCrest-y">Vertical</label><output id="quickCrestOut-y"></output><button type="button" class="secondary crest-step" data-crest-key="y" data-crest-step="-0.5" aria-label="Disminuir vertical">−</button><input id="quickCrest-y" data-crest-range="y" type="range" min="0" max="100" step="0.5"><button type="button" class="secondary crest-step" data-crest-key="y" data-crest-step="0.5" aria-label="Aumentar vertical">+</button></div>
+</div></div></div></details>
+<details class="squad-fold"><summary>Plantel local <span id="squadCount"></span></summary><div class="squad-content">
+        <div class="players"><input id="playerInput" placeholder="Nombre y apellido"><button id="addPlayer" class="icon-btn" aria-label="Agregar jugador">+</button></div>
+        <div id="playerList" class="player-list"></div></div></details>
+        <div class="section-title">Próximo partido</div>
+        <div class="form-grid">
+          <div class="field"><label>Día</label><input id="matchDay" placeholder="Ej: SÁBADO"></div>
+          <div class="field"><label>Hora</label><input id="matchTime" placeholder="Ej: 11:00 AM"></div>
+          <div class="field full"><label>Lugar</label><input id="matchPlace" placeholder="Ej: COMPLEJO MICROSULES"></div>
+        </div>
+        <div class="upcoming-actions"><button id="upcomingStory" class="primary">Publicar próximo partido</button></div>
+        <div class="section-title">Diseño que se utilizará</div>
+        <div class="field"><label>Diseño para todas las historias</label><select id="presetChooser"></select></div>
+      </div>
+      <aside class="card preview-shell"><h2>Vista previa</h2><p class="sub">Así se verá el próximo partido.</p><div class="phone"><div id="setupStory" class="story rendered-story"></div></div></aside>
+    </div>
+    <div class="card backup-card">
+      <h2>Copia de seguridad</h2>
+      <p class="sub">Descargá equipos, jugadores, diseños y el partido actual. Podés restaurarlos más adelante desde este mismo panel.</p>
+      <div class="backup-actions">
+        <button id="exportBackup" class="secondary" type="button">↓ Exportar copia</button>
+        <button id="chooseBackup" class="primary" type="button">↥ Restaurar copia</button>
+        <input id="restoreBackupFile" class="hidden" type="file" accept="application/json,.json">
+      </div>
+    </div>
+  </section>
+
+  <section id="teams" class="view" data-admin-only>
+    <div class="team-manager">
+      <div class="card">
+        <h2 id="teamFormTitle">Agregar equipo</h2><p class="sub">Guardá el nombre y el escudo una sola vez.</p>
+        <div class="field"><label>Nombre del equipo</label><input id="teamName" placeholder="Ej: Hammers"></div>
+        <div class="upload" style="margin-top:12px"><img id="teamThumb" alt=""><div><strong>Escudo</strong><br><label for="teamLogo">Elegir imagen</label><input id="teamLogo" type="file" accept="image/*"></div></div>
+        <button id="saveTeam" class="primary wide">Guardar equipo</button>
+        <button id="cancelTeamEdit" class="secondary wide hidden">Cancelar edición</button>
+      </div>
+      <div class="card">
+        <h2>Equipos guardados</h2><p class="sub">Podés usarlos directamente como local o visitante.</p>
+        <div id="teamLibrary" class="team-library"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="designer" class="view" data-admin-only>
+    <div class="designer-grid">
+      <div class="card">
+        <h2>Editor de formatos</h2><p class="sub">Cada tipo de historia guarda su propio diseño. Los cambios se aplican a todas las historias nuevas de ese formato.</p>
+        <div class="preset-bar">
+          <div class="field"><label>Diseño guardado</label><select id="savedPresetSelect"></select></div>
+          <div class="preset-actions"><input id="presetName" placeholder="Nombre del nuevo diseño"><button id="savePreset" class="primary">Crear diseño</button><button id="deletePreset" class="danger">Eliminar</button></div>
+          <button id="updatePreset" class="secondary wide">Actualizar el diseño seleccionado</button>
+        </div>
+        <div id="designerControls" class="hidden">
+        <div class="form-grid">
+          <div class="field"><label>Tipo de historia a editar</label><select id="formatSelect"></select></div>
+          <div class="field"><label>Elemento a editar</label><select id="elementSelect"></select></div>
+          <div class="field full"><label>Texto del título</label><input id="customTitle" placeholder="Título que aparecerá en la historia"></div>
+          <div id="customContentField" class="field full hidden"><label>Contenido del texto agregado</label><input id="customContent" placeholder="Escribí el texto"></div>
+        </div>
+        <div class="add-elements"><button id="addTextElement" class="secondary">+ Agregar texto</button><button id="addLineElement" class="secondary">+ Agregar línea</button><button id="deleteElement" class="danger" disabled>Eliminar</button></div>
+        <div class="section-title">Posición y tamaño</div>
+        <label class="notice" style="display:flex;align-items:center;gap:10px;margin:0 0 14px"><input id="applyGeometryAll" type="checkbox" style="width:21px;height:21px;accent-color:var(--green)"> Aplicar posición y tamaño de este elemento en todos los tipos de historia del diseño</label>
+        <div class="editor-row"><label>Horizontal</label><input id="posX" type="range" min="0" max="100"><output id="posXOut"></output></div>
+        <div class="editor-row"><label>Vertical</label><input id="posY" type="range" min="0" max="100"><output id="posYOut"></output></div>
+        <div class="editor-row"><label id="sizeLabel">Tamaño</label><input id="elementSize" type="range" min="8" max="400"><output id="sizeOut"></output></div>
+        <div id="lineHeightRow" class="editor-row hidden"><label>Alto de línea</label><input id="lineHeight" type="range" min="1" max="80"><output id="lineHeightOut"></output></div>
+        <div class="style-controls">
+          <div class="form-grid">
+            <div class="field full"><label>Fuente del elemento seleccionado</label><select id="fontSelect"></select></div>
+          </div>
+          <div class="editor-row"><label>Negrita</label><input id="boldToggle" type="checkbox" style="width:24px;height:24px;accent-color:var(--green)"><output id="boldOut"></output></div>
+          <div class="editor-row"><label>Separar letras</label><input id="letterSpacing" type="range" min="-2" max="30" step="1"><output id="spacingOut"></output></div>
+          <div class="section-title">Color del elemento</div>
+          <div class="color-tools"><input id="colorPicker" type="color"><button id="addColor" class="secondary">+ Guardar color</button></div>
+          <div id="palette" class="palette"></div>
+          <div class="apply-style"><select id="colorScope"><option value="element">Solo este elemento</option><option value="format">Textos de este formato</option><option value="all">Textos de todos los formatos</option></select><button id="applyColor" class="secondary">Aplicar color</button></div>
+        </div>
+        <p class="format-note">Las posiciones se guardan en porcentajes para que el diseño mantenga la proporción en la vista previa y en la imagen descargada de 1080 × 1920.</p>
+        <div class="editor-actions"><button id="resetFormat" class="danger">Restaurar formato</button><button id="saveFormat" class="primary">Guardar cambios</button></div>
+        </div>
+      </div>
+      <aside id="designerPreview" class="card preview-shell hidden"><h2>Vista previa del formato</h2><p class="sub">Seleccioná un elemento y movelo con los controles.</p><div class="phone"><div id="designerStory" class="story"></div></div></aside>
+    </div>
+  </section>
+
+  <section id="live" class="view">
+    <div class="live-grid">
+      <div class="card">
+        <div class="phase" id="phase">PARTIDO SIN INICIAR</div>
+        <div class="scoreboard">
+          <div class="team"><div id="liveHomeLogo"></div><strong id="liveHomeName">Local</strong></div>
+          <div class="score-live"><span id="homeScore">0</span> – <span id="awayScore">0</span></div>
+          <div class="team"><div id="liveAwayLogo"></div><strong id="liveAwayName">Visitante</strong></div>
+        </div>
+        <div id="timerPanel" class="match-timer timer-locked">
+          <div class="timer-head"><span>CRONÓMETRO</span><button id="timerLock" class="timer-lock" type="button" aria-label="Desbloquear cronómetro" aria-pressed="false"><span id="timerLockIcon" class="ui-icon" data-ui-icon="lock" aria-hidden="true"></span></button></div>
+          <div class="timer-body">
+            <button id="timerDisplay" class="timer-display" type="button" title="Tocar para modificar el minuto">00:00</button>
+            <div id="timerMinute" class="timer-minute">MIN 0' · TOCÁ EL TIEMPO PARA EDITAR</div>
+            <div id="timerEditor" class="timer-inline-edit hidden"><button id="timerMinus" class="timer-step" type="button" aria-label="Restar un minuto">−</button><input id="timerEdit" type="number" inputmode="numeric" min="0" max="120" aria-label="Minuto del partido"><button id="timerPlus" class="timer-step" type="button" aria-label="Sumar un minuto">+</button><button id="timerApply" type="button">✓ Aplicar</button></div>
+            <div class="timer-actions">
+              <button id="timerStart" type="button" aria-pressed="false"><span class="ui-icon" data-ui-icon="play" aria-hidden="true"></span>Iniciar</button>
+              <button id="timerPause" type="button" aria-pressed="true"><span class="ui-icon" data-ui-icon="pause" aria-hidden="true"></span>Pausar</button>
+              <button id="timerReset" type="button"><span class="ui-icon" data-ui-icon="reset" aria-hidden="true"></span>Reiniciar</button>
+            </div>
+          </div>
+          <div class="timer-glass" aria-hidden="true"></div>
+        </div>
+        <button id="openLineup" class="secondary lineup-open" type="button"><span class="ui-icon" data-ui-icon="formation" aria-hidden="true"></span>11 titular</button>
+        <div class="event-grid">
+          <button class="event main" data-event="goalHome"><span class="ui-icon" data-ui-icon="goal" aria-hidden="true"></span><span class="event-label">Gol local</span></button>
+          <button class="event main" data-event="goalAway"><span class="ui-icon" data-ui-icon="goal" aria-hidden="true"></span><span class="event-label">Gol visitante</span></button>
+          <button class="event" data-event="start"><span class="ui-icon" data-ui-icon="play" aria-hidden="true"></span><span class="event-label">Inicio</span></button>
+          <button class="event" data-event="halftime"><span class="ui-icon" data-ui-icon="pause" aria-hidden="true"></span><span class="event-label">Entretiempo</span></button>
+          <button class="event" data-event="secondhalf"><span class="ui-icon" data-ui-icon="play" aria-hidden="true"></span><span class="event-label">Segundo tiempo</span></button>
+          <button class="event" data-event="final"><span class="ui-icon" data-ui-icon="flag" aria-hidden="true"></span><span class="event-label">Final</span></button>
+        </div>
+      </div>
+      <aside class="card events-card"><h2>Historial del partido</h2><div id="timeline" class="timeline"></div></aside>
+    </div>
+  </section>
+</main>
+
+<div id="lineupModal" class="modal"><div class="sheet lineup-sheet"><div class="sheet-head"><h3>11 titular <small id="lineupCount"></small></h3><button class="close" data-close aria-label="Cerrar alineación">×</button></div><div class="field lineup-formation"><label for="lineupFormation">Formación</label><select id="lineupFormation"><option value="442">4–4–2</option><option value="433">4–3–3</option><option value="343">3–4–3</option><option value="352">3–5–2</option></select></div><div id="lineupPitch" class="lineup-pitch"></div><div class="sheet-actions"><button class="secondary" data-close>Cerrar</button><button id="createLineup" class="primary">Crear historia</button></div></div></div>
+<div id="goalModal" class="modal"><div class="sheet"><div class="sheet-head"><h3 id="goalTitle">Registrar gol</h3><button class="close" data-close>×</button></div><div class="form-grid" style="margin-top:18px"><div class="field"><label>Jugador</label><select id="scorer"></select></div><div class="field"><label>Minuto</label><input id="minute" type="number" min="0" max="120" placeholder="Ej: 37"></div></div><div class="notice">Antes de guardar podés confirmar jugador, minuto y equipo. El marcador se actualiza al confirmar.</div><div class="sheet-actions"><button class="secondary" data-close>Cancelar</button><button id="confirmGoal" class="primary">Confirmar gol</button></div></div></div>
+<div id="storyModal" class="modal"><div class="sheet"><div class="sheet-head"><h3>Historia generada</h3><button class="close" data-close>×</button></div><div class="phone" style="margin-top:16px"><div id="finalStory" class="story"></div></div><div class="sheet-actions"><button class="secondary" data-close>Cerrar</button><button id="downloadStory" class="secondary">Descargar PNG</button><button id="publishStory" class="primary">Publicar en Instagram</button></div><div class="notice">Revisá la historia antes de publicarla. La publicación se realizará inmediatamente en @brujasfpcoficial.</div></div></div>
+<div id="publishModal" class="modal"><div class="sheet"><div class="sheet-head"><h3>Confirmar publicación</h3><button class="close" data-close>×</button></div><div class="field" style="margin-top:18px"><label>Contraseña de publicación</label><input id="publishPassword" type="password" autocomplete="current-password" placeholder="Ingresá la contraseña"></div><div class="notice">Esta acción publicará ahora la historia en @brujasfpcoficial.</div><div class="sheet-actions"><button class="secondary" data-close>Cancelar</button><button id="confirmPublish" class="primary">Confirmar y publicar</button></div></div></div>
+<div id="confirmModal" class="modal"><div class="sheet"><div class="sheet-head"><h3>Confirmar acción</h3><button id="confirmClose" class="close" type="button">×</button></div><p id="confirmMessage" class="notice" style="margin-top:18px"></p><div class="sheet-actions"><button id="confirmCancel" class="secondary" type="button">Cancelar</button><button id="confirmAccept" class="danger" type="button">Confirmar</button></div></div></div>
+<div id="toast" class="toast"></div>
+<script src="app.js?v=20260925-crest3"></script>
+<script type="module" src="firebase.js?v=20260916-1"></script>
+</body>
+</html>
