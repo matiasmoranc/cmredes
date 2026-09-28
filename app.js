@@ -549,9 +549,10 @@ async function buildStoryImage(event=selectedEvent,formatOverride=null){
  const eventScore=scoreForEvent(event),periodTitle=goalPeriod(event);
  const c=document.createElement('canvas');c.width=1080;c.height=1920;
  const x=c.getContext('2d');
- const [base,hi,ai]=await Promise.all([imgLoad('assets/story-base.jpg'),imgLoad(storyState.homeLogo),imgLoad(storyState.awayLogo)]);
+ const templateAsset=cfg.template?.theme?`assets/template-${cfg.template.theme}.svg`:'';
+ const [base,artwork,hi,ai]=await Promise.all([imgLoad('assets/story-base.jpg'),imgLoad(templateAsset),imgLoad(storyState.homeLogo),imgLoad(storyState.awayLogo)]);
  x.clearRect(0,0,c.width,c.height);
- if(cfg.template?.theme)drawPosterBackground(x,cfg.template.theme);else if(base)x.drawImage(base,0,0,1080,1920);else{x.fillStyle='#fff';x.fillRect(0,0,1080,1920)}
+ if(cfg.template?.theme){drawPosterBackground(x,cfg.template.theme);if(artwork)x.drawImage(artwork,0,0,1080,1920)}else if(base)x.drawImage(base,0,0,1080,1920);else{x.fillStyle='#fff';x.fillRect(0,0,1080,1920)}
  await Promise.all(Object.values(cfg.elements).filter(e=>e.font).map(e=>document.fonts.load(`${e.weight||700} ${e.size}px "${e.font}"`).catch(()=>null)));
  drawText(x,(f==='goal'?periodTitle:cfg.title).toUpperCase(),cfg.elements.title);
  const ln=cfg.elements.line;x.fillStyle=ln.color;x.fillRect(ln.x*10.8-ln.size/2,ln.y*19.2-ln.height/2,ln.size,ln.height);
@@ -788,9 +789,9 @@ function lineupEditorHTML(ev,interactive){
 async function buildLineupImage(event,formatOverride=null){
  const ev=JSON.parse(JSON.stringify(event)),cfg=JSON.parse(JSON.stringify(formatOverride||formats.lineup)),e=cfg.elements;
  const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;
- const ctx=canvas.getContext('2d'),[base,logo]=await Promise.all([imgLoad('assets/story-base.jpg'),imgLoad(ev.homeLogo)]);
+ const ctx=canvas.getContext('2d'),templateAsset=cfg.template?.theme?`assets/template-${cfg.template.theme}.svg`:'',[base,artwork,logo]=await Promise.all([imgLoad('assets/story-base.jpg'),imgLoad(templateAsset),imgLoad(ev.homeLogo)]);
  await Promise.all(Object.values(e).filter(el=>el.font).map(el=>document.fonts.load((el.weight||700)+' '+el.size+'px "'+el.font+'"').catch(()=>null)));
- if(cfg.template?.theme)drawPosterBackground(ctx,cfg.template.theme);else{ctx.fillStyle='#f5f5f2';ctx.fillRect(0,0,1080,1920);if(base)ctx.drawImage(base,0,0,1080,1920)}
+ if(cfg.template?.theme){drawPosterBackground(ctx,cfg.template.theme);if(artwork)ctx.drawImage(artwork,0,0,1080,1920)}else{ctx.fillStyle='#f5f5f2';ctx.fillRect(0,0,1080,1920);if(base)ctx.drawImage(base,0,0,1080,1920)}
  const pe=e.pitch,w=pe.size*3,h=w*1030/930,left=pe.x*10.8-w/2,top=pe.y*19.2-h/2;
  ctx.save();ctx.translate(left,top);ctx.scale(w/930,h/1030);
  ctx.fillStyle=pe.color;ctx.fillRect(0,0,930,1030);
