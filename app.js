@@ -452,6 +452,16 @@ function closeConfirm(){pendingConfirm=null;$('#confirmModal').classList.remove(
 function appConfirm(message,onAccept){pendingConfirm=onAccept;$('#confirmMessage').textContent=message;$('#confirmModal').classList.add('open')}
 $('#confirmCancel').onclick=closeConfirm;$('#confirmClose').onclick=closeConfirm;
 $('#confirmAccept').onclick=()=>{const action=pendingConfirm;closeConfirm();if(action)action()};
+function addRangeSteppers(scope=document){
+ scope.querySelectorAll('.editor-row input[type="range"],.floating-control input[type="range"]').forEach(range=>{
+  if(range.dataset.rangeStepper)return;
+  range.dataset.rangeStepper='true';
+  const makeButton=(direction,label)=>{const button=document.createElement('button');button.type='button';button.className='range-step';button.dataset.rangeStep=direction;button.setAttribute('aria-label',label);button.textContent=direction<0?'−':'+';return button};
+  const minus=makeButton(-1,'Disminuir valor'),plus=makeButton(1,'Aumentar valor'),floating=range.closest('.floating-control');
+  if(floating){const wrap=document.createElement('div');wrap.className='range-stepper';range.replaceWith(wrap);wrap.append(minus,range,plus)}else{range.before(minus);range.after(plus)}
+ })
+}
+document.addEventListener('click',event=>{const button=event.target.closest('[data-range-step]');if(!button)return;const range=button.closest('.range-stepper')?.querySelector('input[type="range"]')||button.closest('.editor-row')?.querySelector('input[type="range"]');if(!range||range.disabled)return;if(Number(button.dataset.rangeStep)<0)range.stepDown();else range.stepUp();range.dispatchEvent(new Event('input',{bubbles:true}))});
 function renderDesigner(){
  if(!$('#formatSelect').options.length)$('#formatSelect').innerHTML=Object.entries(formatNames).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
  $('#formatSelect').value=editFormat;$('#savedPresetSelect').innerHTML=presetOptions();const hasDesign=!!(activeDesign&&savedDesigns[activeDesign]);$('#savedPresetSelect').value=hasDesign?activeDesign:'';$('#designerControls').classList.toggle('hidden',!hasDesign);$('#designerPreview').classList.toggle('hidden',!hasDesign);$('#deletePreset').disabled=!hasDesign;$('#updatePreset').disabled=!hasDesign;if(!hasDesign)return;const els=applicableFor(editFormat);if(!els.includes(editElement))editElement=els[0];
@@ -464,6 +474,7 @@ function renderDesigner(){
  const designer=$('#designerStory');
  designer.classList.add('canvas-editor');
  designer.innerHTML='<img class="editor-canvas-image" alt="Vista previa exacta">'+storyHTML(sampleEvent(editFormat),true);
+ addRangeSteppers(designer);
  queueDesignerCanvas()
 }
 let designerCanvasTimer=0,designerCanvasRequest=0;
@@ -518,6 +529,7 @@ function targets(scope,includeLine=false){let out=[];const fs=scope==='all'?Obje
 $('#fontSelect').onchange=e=>{formats[editFormat].elements[editElement].font=e.target.value;renderDesigner()};
 $('#boldToggle').onchange=e=>{formats[editFormat].elements[editElement].weight=e.target.checked?900:400;renderDesigner()};
 $('#letterSpacing').oninput=e=>{formats[editFormat].elements[editElement].spacing=+e.target.value;renderDesigner()};
+addRangeSteppers();
 function renderPalette(){$('#palette').innerHTML=palette.map(c=>`<button class="swatch ${c.toLowerCase()===$('#colorPicker').value.toLowerCase()?'active':''}" data-color="${c}" style="background:${c}" title="${c}"></button>`).join('')}
 $('#palette').onclick=e=>{if(e.target.dataset.color){$('#colorPicker').value=e.target.dataset.color;renderPalette()}};
 $('#colorPicker').oninput=renderPalette;
