@@ -75,3 +75,6 @@
 /* El canvas es la única capa visible del editor; los elementos invisibles conservan el clic. */
 .story.canvas-editor>.story-item:not(.floating-editor){opacity:0!important}
 .asset-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:14px 0}.upload-control{min-height:46px;display:flex;align-items:center;justify-content:center;text-align:center}.background-controls{margin:12px 0;padding:4px 0 1px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.add-elements{grid-template-columns:1fr 1fr}.add-elements button{padding:12px 8px;font-size:12px}
+
+/* Botones de precisión para todos los controles deslizantes del editor. */
+.editor-row{grid-template-columns:130px 36px minmax(0,1fr) 36px 54px}.range-step{width:36px;height:36px;padding:0;border:1px solid #3d5041;border-radius:10px;background:#202b23;color:#dfffcf;font-size:22px;font-weight:900;line-height:1;display:grid;place-items:center}.range-step:disabled{opacity:.35}.range-stepper{display:grid;grid-template-columns:30px minmax(0,1fr) 30px;gap:5px;align-items:center}.range-stepper .range-step{width:30px;height:30px;border-radius:8px;font-size:18px}.range-stepper input[type=range]{min-width:0}@media(max-width:760px){.editor-row{grid-template-columns:105px 34px minmax(0,1fr) 34px 45px}.range-step{width:34px;height:34px}}
