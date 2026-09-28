@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0b2516"/><stop offset=".52" stop-color="#174c2d"/><stop offset="1" stop-color="#07160d"/></linearGradient>
+    <pattern id="stripes" width="160" height="160" patternUnits="userSpaceOnUse"><rect width="80" height="160" fill="#f5c947" opacity=".075"/></pattern>
+    <filter id="paper"><feTurbulence baseFrequency=".55" numOctaves="2"/><feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 .07 0"/></filter>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#bg)"/><rect width="1080" height="1920" fill="url(#stripes)"/>
+  <rect x="52" y="52" width="976" height="1816" rx="8" fill="none" stroke="#f5c947" stroke-width="8"/><rect x="72" y="72" width="936" height="1776" fill="none" stroke="#f5c947" stroke-opacity=".34" stroke-width="2"/>
+  <path d="M52 230h976M52 1690h976" stroke="#f5c947" stroke-width="6"/><path d="M410 52v178M670 52v178M410 1690v178M670 1690v178" stroke="#f5c947" stroke-width="6"/>
+  <g fill="#f5c947" opacity=".85"><circle cx="52" cy="230" r="11"/><circle cx="1028" cy="230" r="11"/><circle cx="52" cy="1690" r="11"/><circle cx="1028" cy="1690" r="11"/></g>
+  <rect width="1080" height="1920" filter="url(#paper)" opacity=".65"/>
+</svg>
